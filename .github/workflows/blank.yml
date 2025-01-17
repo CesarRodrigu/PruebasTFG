@@ -18,6 +18,10 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
+    # NEW STEP: Configure safe directory
+    - name: Configure safe directory
+      run: git config --global --add safe.directory /__w/PruebasTFG/PruebasTFG
+
     # Paso 2: Encuentra y compila los archivos modificados
     - name: Find and Compile LaTeX Files
       run: |
