@@ -29,8 +29,8 @@ jobs:
     # NEW STEP: Ensure required files exist
     - name: Ensure Required Files
       run: |
-        touch memoria.toc
-        touch memoria.lof
+        touch memoria.tex
+        touch anexos.tex
 
     # Paso 2: Compila memoria.tex y anexos.tex
     - name: Compile LaTeX Files
