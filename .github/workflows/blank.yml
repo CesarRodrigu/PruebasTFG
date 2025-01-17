@@ -24,7 +24,13 @@ jobs:
 
     # NEW STEP: Configure safe directory
     - name: Configure safe directory
-      run: git config --global --add safe.directory /__w/${{ github.repository }}/
+      run: git config --global --add safe.directory /__w/${{ github.repository }}
+
+    # NEW STEP: Ensure required files exist
+    - name: Ensure Required Files
+      run: |
+        touch memoria.toc
+        touch memoria.lof
 
     # Paso 2: Compila memoria.tex y anexos.tex
     - name: Compile LaTeX Files
