@@ -1,0 +1,35 @@
+name: Generate PDFs
+
+on:
+  push:
+
+jobs:
+  texlive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install TeX Live
+        uses: zauguin/install-texlive@v3
+        with:
+          packages: >
+            l3build latex latex-bin luatex latex-bin-dev latex-recommended
+
+      - name: Compile memoria.tex
+        run: |
+          pdflatex memoria.tex
+          pdflatex memoria.tex  # Ejecutar dos veces para referencias cruzadas
+
+      - name: Compile anexos.tex
+        run: |
+          pdflatex anexos.tex
+          pdflatex anexos.tex  # Ejecutar dos veces para referencias cruzadas
+
+      - name: Upload PDFs as artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: compiled-pdfs
+          path: |
+            memoria.pdf
+            anexos.pdf
