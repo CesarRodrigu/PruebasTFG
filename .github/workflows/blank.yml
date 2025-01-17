@@ -3,7 +3,11 @@ name: LaTeX to PDF and Push
 on:
   push:
     paths:
-      - '**/*.tex' # Solo se ejecuta cuando se modifica un archivo .tex
+      - '**/memoria.tex'
+      - '**/anexos.tex' # Solo se ejecuta cuando se modifican estos archivos
+      - '**/*.bib'      # También si se modifica un archivo .bib
+      - '**/tex/**'     # O cualquier archivo en la carpeta `tex/`
+      - '**/img/**'     # O cualquier archivo en la carpeta `img/`
   workflow_dispatch: # Permite ejecutarlo manualmente
 
 jobs:
@@ -20,15 +24,16 @@ jobs:
 
     # NEW STEP: Configure safe directory
     - name: Configure safe directory
-      run: git config --global --add safe.directory /__w/PruebasTFG/PruebasTFG
+      run: git config --global --add safe.directory /__w/${{ github.repository }}/
 
-    # Paso 2: Encuentra y compila los archivos modificados
-    - name: Find and Compile LaTeX Files
+    # Paso 2: Compila memoria.tex y anexos.tex
+    - name: Compile LaTeX Files
       run: |
         mkdir -p compiled
-        for file in $(git diff --name-only HEAD~1 HEAD | grep '.tex$'); do
-          latexmk -pdf -output-directory=compiled $file
-        done
+        # Compila memoria.tex
+        latexmk -pdf -output-directory=compiled memoria.tex
+        # Compila anexos.tex
+        latexmk -pdf -output-directory=compiled anexos.tex
 
     # Paso 3: Realiza el commit y push de los PDFs generados
     - name: Push Compiled PDFs
@@ -36,7 +41,7 @@ jobs:
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
         git add compiled/*.pdf
-        git commit -m "Add compiled PDFs for modified LaTeX files [skip ci]" || echo "No changes to commit"
+        git commit -m "Add compiled PDFs for memoria and anexos [skip ci]" || echo "No changes to commit"
         git push
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
