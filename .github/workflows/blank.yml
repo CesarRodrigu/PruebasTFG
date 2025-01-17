@@ -3,37 +3,36 @@ name: LaTeX to PDF and Push
 on:
   push:
     paths:
-      - '**/*.tex' # Ejecuta la acción solo si se modifica un archivo .tex
+      - '**/*.tex' # Solo se ejecuta cuando se modifica un archivo .tex
   workflow_dispatch: # Permite ejecutarlo manualmente
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
 
+    container:
+      image: danteev/texlive:latest # Imagen Docker con LaTeX preinstalado
+
     steps:
     # Paso 1: Configura el repositorio
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    # Paso 2: Instala LaTeX
-    - name: Install TeX Live
-      run: sudo apt-get update && sudo apt-get install -y texlive-full
-
-    # Paso 3: Compila el archivo .tex a PDF
-    - name: Compile LaTeX document
+    # Paso 2: Encuentra y compila los archivos modificados
+    - name: Find and Compile LaTeX Files
       run: |
-        mkdir -p output
-        latexmk -pdf -output-directory=output your-document.tex
-      working-directory: ./ # Cambia este directorio si tu archivo .tex está en un subdirectorio
+        mkdir -p compiled
+        for file in $(git diff --name-only HEAD^ HEAD | grep '.tex$'); do
+          latexmk -pdf -output-directory=compiled $file
+        done
 
-    # Paso 4: Copia el PDF al repositorio
-    - name: Move PDF to repository
+    # Paso 3: Realiza el commit y push de los PDFs generados
+    - name: Push Compiled PDFs
       run: |
-        mv output/your-document.pdf ./compiled/
         git config --global user.name "github-actions[bot]"
         git config --global user.email "github-actions[bot]@users.noreply.github.com"
-        git add compiled/your-document.pdf
-        git commit -m "Add compiled PDF [skip ci]"
+        git add compiled/*.pdf
+        git commit -m "Add compiled PDFs for modified LaTeX files [skip ci]" || echo "No changes to commit"
         git push
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
