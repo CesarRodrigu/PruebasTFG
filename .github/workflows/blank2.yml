@@ -39,6 +39,7 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git pull --rebase
           git add ${{ env.OUT_DIR }}/${{ env.FILE_NAME }}.pdf
           git add ${{ env.OUT_DIR }}/${{ env.FILE_NAME2 }}.pdf
           git diff --staged --quiet || (git commit -m "Update compiled ${{ env.FILE_NAME }}.pdf and ${{ env.FILE_NAME2 }}.pdf" && git push)
