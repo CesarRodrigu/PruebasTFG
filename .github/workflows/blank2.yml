@@ -23,9 +23,10 @@ jobs:
         uses: xu-cheng/latex-action@v3
         with:
           root_file: ${{ env.FILE_NAME }}.tex
-          output_dir: docs/pdf  # Especifica el directorio de salida
 
-
+      - name: Move PDF to docs/pdf
+        run: |
+          mv ${{ env.FILE_NAME }}.pdf docs/pdf/${{ env.FILE_NAME }}.pdf
 
       - name: Commit and push PDF
         run: |
