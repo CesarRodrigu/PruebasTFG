@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       FILE_NAME: memoria  # Nombre del archivo sin extensión
+      FILE_NAME2: anexos  # Nombre del archivo sin extensión
       OUT_DIR: docs/pdf
       WORK_DIR: docs
 
@@ -24,16 +25,20 @@ jobs:
       - name: Compile LaTeX document
         uses: xu-cheng/latex-action@v3
         with:
-          root_file: ${{ env.FILE_NAME }}.tex
+          root_file: |
+            ${{ env.FILE_NAME }}.tex
+            ${{ env.FILE_NAME2 }}.tex
           working_directory: ${{ env.WORK_DIR }}/
       - name: Move PDF to ${{ env.OUT_DIR }}
         run: |
           mkdir -p ${{ env.OUT_DIR }}
           mv ${{ env.WORK_DIR }}/${{ env.FILE_NAME }}.pdf ${{ env.OUT_DIR }}/${{ env.FILE_NAME }}.pdf
+          mv ${{ env.WORK_DIR }}/${{ env.FILE_NAME2 }}.pdf ${{ env.OUT_DIR }}/${{ env.FILE_NAME2 }}.pdf
 
       - name: Commit and push PDF
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add ${{ env.OUT_DIR }}/${{ env.FILE_NAME }}.pdf
+          git add ${{ env.OUT_DIR }}/${{ env.FILE_NAME2 }}.pdf
           git diff --staged --quiet || (git commit -m "Update compiled ${{ env.FILE_NAME }}.pdf" && git push)
