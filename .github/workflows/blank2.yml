@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    paths:
+      - 'docs/**'          # Detecta cambios en cualquier archivo dentro de docs
+      - '!docs/pdf/**'     # Excluye los cambios dentro de docs/pdf
   workflow_dispatch:
 
 jobs:
