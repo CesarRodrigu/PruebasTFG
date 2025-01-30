@@ -27,7 +27,7 @@ jobs:
 
       - name: Move PDF to docs/pdf
         run: |
-          mv ${{ env.FILE_NAME }}.pdf docs/pdf/${{ env.FILE_NAME }}.pdf
+          mv docs/${{ env.FILE_NAME }}.pdf docs/pdf/${{ env.FILE_NAME }}.pdf
 
       - name: Commit and push PDF
         run: |
