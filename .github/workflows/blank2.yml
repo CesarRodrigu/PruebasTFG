@@ -23,8 +23,9 @@ jobs:
         uses: xu-cheng/latex-action@v3
         with:
           root_file: ${{ env.FILE_NAME }}.tex
-          working_directory: docs  # Compila dentro de 'docs'
-          args: "-output-directory=pdf"  # Genera el PDF en 'docs/pdf/'
+          output_dir: docs/pdf  # Especifica el directorio de salida
+
+
 
       - name: Commit and push PDF
         run: |
