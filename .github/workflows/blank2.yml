@@ -23,13 +23,8 @@ jobs:
         uses: xu-cheng/latex-action@v3
         with:
           root_file: ${{ env.FILE_NAME }}.tex
-          workdir: docs  # Indica que el LaTeX se ejecuta dentro de 'docs'
-          output_directory: docs  # Asegura que el PDF salga en 'docs/'
-
-      - name: Move PDF
-        run: |
-          mkdir -p docs/pdf
-          mv docs/${{ env.FILE_NAME }}.pdf docs/pdf/${{ env.FILE_NAME }}.pdf
+          working_directory: docs  # Compila dentro de 'docs'
+          args: "-output-directory=pdf"  # Genera el PDF en 'docs/pdf/'
 
       - name: Commit and push PDF
         run: |
