@@ -22,7 +22,7 @@ jobs:
       - name: Compile LaTeX document
         uses: xu-cheng/latex-action@v3
         with:
-          root_file: ${{ env.FILE_NAME }}.tex
+          root_file: docs/${{ env.FILE_NAME }}.tex
 
       - name: Move PDF to docs/pdf
         run: |
