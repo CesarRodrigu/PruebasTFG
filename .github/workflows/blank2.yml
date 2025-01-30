@@ -24,7 +24,9 @@ jobs:
         with:
           root_file: ${{ env.FILE_NAME }}.tex
           working_directory: docs/
-
+      - name: List all files and paths
+        run: |
+          find . -type f
       - name: Move PDF to docs/pdf
         run: |
           mv docs/${{ env.FILE_NAME }}.pdf docs/pdf/${{ env.FILE_NAME }}.pdf
