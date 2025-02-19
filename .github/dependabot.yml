@@ -5,8 +5,14 @@
 
 version: 2
 updates:
-  - package-ecosystem: "" # See documentation for possible values
-    directory: "/" # Location of package manifests
+  # Actualizaciones para dependencias de Python (pip)
+  - package-ecosystem: "pip"
+    directory: "/" # Cambia este directorio si tu archivo requirements.txt está en otra carpeta
     schedule:
       interval: "weekly"
- 
+
+  # Actualizaciones para dependencias de Maven
+  - package-ecosystem: "maven"
+    directory: "/" # Cambia este directorio si tu archivo pom.xml está en otra carpeta
+    schedule:
+      interval: "weekly"
