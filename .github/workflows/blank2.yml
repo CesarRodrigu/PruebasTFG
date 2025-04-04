@@ -1,26 +1,28 @@
-name: CI
+name: Generate PDFs form LaTex
 
 on:
   push:
+    branches:
+      - main   
     paths:
-      - 'docs/**'          # Detecta cambios en cualquier archivo dentro de docs
-      - '!docs/pdf/**'     # Excluye los cambios dentro de docs/pdf
+      - 'docs/source/**'        
+      - '!docs/pdf/**'   
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      FILE_NAME: memoria  # Nombre del archivo sin extensión
-      FILE_NAME2: anexos  # Nombre del archivo sin extensión
-      OUT_DIR: docs/pdf
-      WORK_DIR: docs
+      FILE_NAME: memoria  
+      FILE_NAME2: anexos 
+      OUT_DIR: docs/pdfs
+      WORK_DIR: docs/source
 
     steps:
       - name: Set up Git repository
         uses: actions/checkout@v4
         with:
-          persist-credentials: true  # Mantiene credenciales para hacer push
+          persist-credentials: true
 
       - name: Compile LaTeX document
         uses: xu-cheng/latex-action@v3
