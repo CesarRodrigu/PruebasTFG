@@ -17,15 +17,20 @@ jobs:
         chmod 600 ~/.ssh/id_rsa
         ssh-keyscan -H ${{ secrets.AWS_HOST }} >> ~/.ssh/known_hosts
 
-    - name: Copy code to EC2
-      run: |
-        rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no" ./ ${{ secrets.AWS_USER }}@${{ secrets.AWS_HOST }}:/home/${{ secrets.AWS_USER }}/app
-
-    - name: Deploy with Docker Compose
+    - name: Stop containers on EC2
       run: |
         ssh -o StrictHostKeyChecking=no ${{ secrets.AWS_USER }}@${{ secrets.AWS_HOST }} << 'EOF'
           cd ~/app
           docker-compose down || true
-          docker-compose pull || true
+        EOF
+
+    - name: Copy code to EC2
+      run: |
+        rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no" ./ ${{ secrets.AWS_USER }}@${{ secrets.AWS_HOST }}:/home/${{ secrets.AWS_USER }}/app
+
+    - name: Start containers on EC2
+      run: |
+        ssh -o StrictHostKeyChecking=no ${{ secrets.AWS_USER }}@${{ secrets.AWS_HOST }} << 'EOF'
+          cd ~/app
           docker-compose up -d --build
         EOF
