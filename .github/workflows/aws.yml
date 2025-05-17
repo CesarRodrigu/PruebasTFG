@@ -1,4 +1,4 @@
-name: Test SSH Access
+name: Deply AWS
 
 on: [workflow_dispatch]
 
