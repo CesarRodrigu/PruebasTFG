@@ -1,0 +1,20 @@
+services:
+  mysqldb:
+    image: mysql:9.3
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - $MYSQLDB_LOCAL_PORT:$MYSQLDB_DOCKER_PORT
+    volumes:
+      - db:/var/lib/mysql
+      - ./sql/data.sql:/docker-entrypoint-initdb.d/data.sql
+  api:
+    build: ./RL/api
+    restart: on-failure
+    env_file: .env
+    ports:
+      - $API_LOCAL_PORT:$API_DOCKER_PORT
+    stdin_open: true
+    tty: true
+volumes:
+  db:
