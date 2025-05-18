@@ -33,6 +33,7 @@ jobs:
       run: |
         ssh -o StrictHostKeyChecking=no ${{ secrets.AWS_USER }}@${{ secrets.AWS_HOST }} << 'EOF'
           cd ~/app
+          chmod +x ./get_permisions.sh
           ./get_permisions.sh
           echo "GROQ_KEY='${{ secrets.GROQ_KEY }}'" >> .env
           docker-compose up -d --build
