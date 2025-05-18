@@ -10,11 +10,12 @@ services:
       - ./sql/data.sql:/docker-entrypoint-initdb.d/data.sql
     networks:
       - app-net
+
   app:
+    image: crv1002/app:latest
     depends_on:
       - mysqldb
       - api
-    build: ./app
     restart: on-failure
     env_file: .env
     environment:
@@ -27,13 +28,14 @@ services:
       - api-app-net
 
   api:
-    build: ./RL/api
+    image: crv1002/api:latest
     restart: on-failure
     env_file: .env
     ports:
       - $API_LOCAL_PORT:$API_DOCKER_PORT
     networks:
       - api-app-net
+
 networks:
   app-net:
   api-app-net:
