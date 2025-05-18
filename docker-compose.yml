@@ -10,7 +10,6 @@ services:
       - ./sql/data.sql:/docker-entrypoint-initdb.d/data.sql
     networks:
       - app-net
-    mem_limit: 400M
   app:
     depends_on:
       - mysqldb
@@ -26,7 +25,6 @@ services:
     networks:
       - app-net
       - api-app-net
-    mem_limit: 300M
 
   api:
     build: ./RL/api
