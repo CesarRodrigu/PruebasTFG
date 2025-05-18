@@ -1,7 +1,6 @@
 services:
   mysqldb:
     image: mysql:9.3
-    restart: unless-stopped
     env_file: .env
     ports:
       - $MYSQLDB_LOCAL_PORT:$MYSQLDB_DOCKER_PORT
@@ -15,7 +14,6 @@ services:
       - mysqldb
       - api
     build: ./app
-    restart: on-failure
     env_file: .env
     environment:
       MYSQL_URL: jdbc:mysql://mysqldb:$MYSQLDB_DOCKER_PORT/$MYSQL_DATABASE
@@ -30,7 +28,6 @@ services:
 
   api:
     build: ./RL/api
-    restart: on-failure
     env_file: .env
     ports:
       - $API_LOCAL_PORT:$API_DOCKER_PORT
