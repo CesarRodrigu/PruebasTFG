@@ -26,7 +26,7 @@ jobs:
 
     - name: Clean remote app folder and copy code to EC2
       run: |
-        ssh -o StrictHostKeyChecking=no ${{ secrets.AWS_USER }}@${{ secrets.AWS_HOST }} "rm -rf ~/app/sql*"
+        ssh -o StrictHostKeyChecking=no ${{ secrets.AWS_USER }}@${{ secrets.AWS_HOST }} "sudo rm -rf ~/app/sql*"
         rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no" ./ ${{ secrets.AWS_USER }}@${{ secrets.AWS_HOST }}:/home/${{ secrets.AWS_USER }}/app
 
     - name: Start containers on EC2
