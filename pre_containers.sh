@@ -1,25 +1,25 @@
 #!/bin/bash
 
-#!/bin/bash
+SRC_DIR="docs/pdfs"
 
-# Cargar variables del .env
+DEST_DIR="app/src/main/resources/static/pdfs"
+
+mkdir -p "$DEST_DIR"
+
+cp "$SRC_DIR/memoria.pdf" "$DEST_DIR/"
+cp "$SRC_DIR/anexos.pdf" "$DEST_DIR/"
 export $(sed -e 's/\r$//' -e '/^#/d' -e '/^$/d' .env | xargs)
 
-# Archivo original
 FILE="./sql/data.sql"
 
-# Archivo temporal
 TMPFILE=$(mktemp)
 
-# Escribir el bloque al principio en el archivo temporal
 cat <<EOF > "$TMPFILE"
 CREATE USER IF NOT EXISTS '${MYSQLDB_USER}'@'%' IDENTIFIED BY '${MYSQL_ROOT_PASSWORD}';
 GRANT ALL PRIVILEGES ON ${MYSQL_DATABASE}.* TO '${MYSQLDB_USER}'@'%';
 FLUSH PRIVILEGES;
 EOF
 
-# Añadir después el contenido original
 cat "$FILE" >> "$TMPFILE"
 
-# Sobrescribir el archivo original con el temporal
 mv "$TMPFILE" "$FILE"
