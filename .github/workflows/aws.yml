@@ -1,37 +1,41 @@
-name: Deploy AWS
+services:
+  mysqldb:
+    image: mysql:9.3
+    env_file: .env
+    ports:
+      - $MYSQLDB_LOCAL_PORT:$MYSQLDB_DOCKER_PORT
+    volumes:
+      - db:/var/lib/mysql
+      - ./sql/data.sql:/docker-entrypoint-initdb.d/data.sql
+    networks:
+      - app-net
 
-on: [workflow_dispatch]
+  app:
+    depends_on:
+      - mysqldb
+      - api
+    build: ./app
+    env_file: .env
+    environment:
+      MYSQL_URL: jdbc:mysql://mysqldb:$MYSQLDB_DOCKER_PORT/$MYSQL_DATABASE
+      API_URL: http://api:$API_DOCKER_PORT
+    ports:
+      - $SPRING_LOCAL_PORT:$SPRING_DOCKER_PORT
+    networks:
+      - app-net
+      - api-app-net
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
+  api:
+    build: ./RL/api
+    env_file: .env
+    ports:
+      - $API_LOCAL_PORT:$API_DOCKER_PORT
+    networks:
+      - api-app-net
 
-    steps:
-    - name: Checkout repo
-      uses: actions/checkout@v3
+networks:
+  app-net:
+  api-app-net:
 
-    - name: Set up SSH key
-      run: |
-        mkdir -p ~/.ssh
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        ssh-keyscan -H ${{ secrets.AWS_HOST }} >> ~/.ssh/known_hosts
-
-    - name: Stop containers on EC2
-      run: |
-        ssh -o StrictHostKeyChecking=no ${{ secrets.AWS_USER }}@${{ secrets.AWS_HOST }} << 'EOF'
-          cd ~/app
-          docker-compose down || true
-        EOF
-
-    - name: Clean remote app folder and copy code to EC2
-      run: |
-        ssh -o StrictHostKeyChecking=no ${{ secrets.AWS_USER }}@${{ secrets.AWS_HOST }} "sudo rm -rf ~/app/sql*"
-        rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no" ./ ${{ secrets.AWS_USER }}@${{ secrets.AWS_HOST }}:/home/${{ secrets.AWS_USER }}/app
-
-    - name: Start containers on EC2
-      run: |
-        ssh -o StrictHostKeyChecking=no ${{ secrets.AWS_USER }}@${{ secrets.AWS_HOST }} << 'EOF'
-          cd ~/app
-          docker-compose up -d --build
-        EOF
+volumes:
+  db:
