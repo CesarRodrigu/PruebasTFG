@@ -34,9 +34,9 @@ public class TrainedModelService {
         String url = System.getenv("API_URL");
 
         if (url == null) {
-            url = "http://localhost:5000/getTrainedModel/";
+            url = "http://localhost:5000/";
         }
-        url += user.getId();
+        url += "/getTrainedModel/"+user.getId();
         ResponseEntity<Response> response = restTemplate.getForEntity(url, Response.class);
         Response responseData = response.getBody();
         if (!Objects.requireNonNull(responseData).isSuccess()) {
